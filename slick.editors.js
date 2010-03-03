@@ -67,6 +67,7 @@ var TextCellEditor = function($container, columnDef, value, dataContext) {
     var $input;
     var defaultValue = value;
     var scope = this;
+    var active = false;
 
     this.init = function() {
         $input = $("<INPUT type=text class='editor-text' />");
@@ -116,6 +117,23 @@ var TextCellEditor = function($container, columnDef, value, dataContext) {
         };
     };
 
+    this.handleKeyDown = function(e) {
+      switch (e.which) {
+        case 9:  // tab
+        case 13:  // enter
+        case 27: /* esc */
+          active = false;
+          break;
+        case 113: // F2
+          active = true;
+          break;
+        default:
+          // active = true;
+          break;
+      }
+      return active;
+    };
+
     this.init();
 };
 
@@ -123,6 +141,7 @@ var IntegerCellEditor = function($container, columnDef, value, dataContext) {
     var $input;
     var defaultValue = value;
     var scope = this;
+    var active = false;
 
     this.init = function() {
         $input = $("<INPUT type=text class='editor-text' />");
@@ -173,6 +192,23 @@ var IntegerCellEditor = function($container, columnDef, value, dataContext) {
         };
     };
 
+    this.handleKeyDown = function(e) {
+      switch (e.which) {
+        case 9:  // tab
+        case 13:  // enter
+        case 27: /* esc */
+          active = false;
+          break;
+        case 113: // F2
+          active = true;
+          break;
+        default:
+          // active = true;
+          break;
+      }
+      return active;
+    };
+
     this.init();
 };
 
@@ -181,7 +217,8 @@ var DateCellEditor = function($container, columnDef, value, dataContext) {
     var $input;
     var defaultValue = value;
     var scope = this;
-
+    var active = false;
+    
     this.init = function() {
         $input = $("<INPUT type=text class='editor-text' />");
 
@@ -194,6 +231,7 @@ var DateCellEditor = function($container, columnDef, value, dataContext) {
         $input.appendTo($container);
         $input.focus().select();
         $input.datepicker({
+            dateFormat: "dd/mm/yy",
             showOn: "button",
             buttonImageOnly: true,
             buttonImage: "../images/calendar.gif"
@@ -231,6 +269,23 @@ var DateCellEditor = function($container, columnDef, value, dataContext) {
             valid: true,
             msg: null
         };
+    };
+
+    this.handleKeyDown = function(e) {
+      switch (e.which) {
+        case 9:  // tab
+        case 13:  // enter
+        case 27: /* esc */
+          active = false;
+          break;
+        case 113: // F2
+          active = true;
+          break;
+        default:
+          // active = true;
+          break;
+      }
+      return active;
     };
 
     this.init();

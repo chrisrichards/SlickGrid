@@ -1310,6 +1310,12 @@ if (!jQuery.fn.drag) {
                 !options.editorLock.isActive() && // grid must not be in edit mode;
                 self.onKeyDown(e, currentRow, currentCell)); // handler must return truthy-value to indicate it handled the event
 
+            if (currentEditor && currentEditor.handleKeyDown) {
+              if (currentEditor.handleKeyDown(e)) {
+                return true;
+              }
+            }
+
             if (!handled) {
                 switch (e.which) {
                 case 27:  // esc
@@ -1750,6 +1756,7 @@ if (!jQuery.fn.drag) {
 
                     if (validationResults.valid) {
                         var value = currentEditor.getValue();
+                        var editorContext = currentEditor.getEditorContext ? currentEditor.getEditorContext() : null;
 
                         if (currentRow < gridDataGetLength()) {
                             if (columns[currentCell].setValueHandler) {
@@ -1762,12 +1769,12 @@ if (!jQuery.fn.drag) {
                             }
 
                             if (self.onCellChange) {
-                                self.onCellChange(currentRow,currentCell,gridDataGetItem(currentRow));
+                                self.onCellChange(currentRow,currentCell,gridDataGetItem(currentRow), editorContext);
                             }
                         }
                         else if (self.onAddNewRow) {
                             makeSelectedCellNormal();
-                            self.onAddNewRow(columns[currentCell], value);
+                            self.onAddNewRow(columns[currentCell], value, editorContext);
                         }
 
                         return true;
