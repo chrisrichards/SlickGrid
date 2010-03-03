@@ -675,3 +675,127 @@ var StarCellEditor = function($container, columnDef, value, dataContext) {
 
     this.init();
 };
+
+var AutoCompleteCellEditor = function($container, columnDef, value, dataContext) {
+  var $input;
+  var defaultValue = value;
+  var scope = this;
+  var autocompleteActive = false;
+  var editorContext;
+
+  this.init = function() {
+    $input = $("<INPUT type=text class='editor-text' />");
+    $input.autocomplete("http://ws.geonames.org/searchJSON", { 
+      dataType:'jsonp', 
+      width: 500, 
+      matchSubset: 0, 
+      formatItem: this.formatItem, 
+      parse: this.parse, 
+      extraParams: {
+        q: '',
+        limit: '',
+        featureClass: 'P',
+        style: 'full',
+        maxRows: 20,
+        name_startsWith: function () { return $input.val() }
+        },
+      enabled: false });
+    $input.result(this.onItemSelected);
+
+    if (value != null) {
+      $input[0].defaultValue = value;
+      $input.val(defaultValue);
+    }
+
+    $input.appendTo($container);
+    $input.focus().select();
+  };
+
+  this.destroy = function() {
+    $input.remove();
+  };
+
+  this.focus = function() {
+    $input.focus();
+  };
+
+  this.setValue = function(value) {
+    $input.val(value);
+    defaultValue = value;
+  };
+
+  this.getValue = function() {
+    return $input.val();
+  };
+
+  this.getEditorContext = function() {
+    return editorContext;
+  }
+
+  this.isValueChanged = function() {
+    return (!($input.val() == "" && defaultValue == null)) && ($input.val() != defaultValue);
+  };
+
+  this.validate = function() {
+    if (columnDef.validator) {
+      var validationResults = columnDef.validator(scope.getValue());
+      if (!validationResults.valid)
+        return validationResults;
+    }
+
+    return {
+      valid: true,
+      msg: null
+    };
+  };
+
+  this.handleKeyDown = function(e) {
+    switch (e.which) {
+      case 9:  // tab
+      case 13:  // enter
+      case 27: /* esc */
+        autocompleteActive = false;
+        $input.setOptions({ enabled: false });
+        $input.blur();
+        return false;
+      case 37:  // left
+      case 39:  // right
+      case 38:  // up
+      case 40:  // down
+        return autocompleteActive;
+      case 113: // F2
+        autocompleteActive = true;
+        $input.setOptions({ enabled: true });
+        $input.caret(9999, 9999);
+        return true;
+      default:
+        autocompleteActive = true;
+        $input.setOptions({ enabled: true });
+        return true;
+    }
+  };
+
+  this.onItemSelected = function(event, data, formatted) {
+    autocompleteActive = false;
+    $input.setOptions({ enabled: false });
+    editorContext = data;
+  }
+
+  this.parse = function(data) {
+    var parsed = [];
+    $.each(data.geonames, function(index, value) {
+      parsed[parsed.length] = {
+        data: value,
+        value: value.name,
+        result: value.name
+      };
+    });
+    return parsed;
+  }
+
+  this.formatItem = function(data, pos, max, value, term) {
+    return data.name + ', ' + data.adminCode1;
+  }
+
+  this.init();
+};
