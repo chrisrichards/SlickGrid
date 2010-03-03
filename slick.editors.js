@@ -699,7 +699,7 @@ var AutoCompleteCellEditor = function($container, columnDef, value, dataContext)
         maxRows: 20,
         name_startsWith: function () { return $input.val() }
         },
-      enabled: false });
+      ignoreKeydownEvents: true });
     $input.result(this.onItemSelected);
 
     if (value != null) {
@@ -755,7 +755,7 @@ var AutoCompleteCellEditor = function($container, columnDef, value, dataContext)
       case 13:  // enter
       case 27: /* esc */
         autocompleteActive = false;
-        $input.setOptions({ enabled: false });
+        $input.setOptions({ ignoreKeydownEvents: true });
         $input.blur();
         return false;
       case 37:  // left
@@ -765,19 +765,19 @@ var AutoCompleteCellEditor = function($container, columnDef, value, dataContext)
         return autocompleteActive;
       case 113: // F2
         autocompleteActive = true;
-        $input.setOptions({ enabled: true });
+        $input.setOptions({ ignoreKeydownEvents: false });
         $input.caret(9999, 9999);
         return true;
       default:
         autocompleteActive = true;
-        $input.setOptions({ enabled: true });
+        $input.setOptions({ ignoreKeydownEvents: false });
         return true;
     }
   };
 
   this.onItemSelected = function(event, data, formatted) {
     autocompleteActive = false;
-    $input.setOptions({ enabled: false });
+    $input.setOptions({ ignoreKeydownEvents: true });
     editorContext = data;
   }
 
