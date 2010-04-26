@@ -105,7 +105,7 @@ if (!jQuery.fn.drag) {
     throw new Error("SlickGrid requires jquery.event.drag module to be loaded");
 }
 
-(function() {
+(function($) {
     var scrollbarDimensions; // shared across all grids on this page
 
 
@@ -1973,4 +1973,4 @@ if (!jQuery.fn.drag) {
             GlobalEditorLock: new EditorLock()
         }
     });
-}());
+}(jQuery));
